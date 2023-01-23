@@ -19,6 +19,11 @@ public class UserService {
     UserRepository userRepository;
 
     public User addUser(User user) {
+        List<User> userList = userRepository.findByUsername(user.getUsername());
+        User u = userList.isEmpty() ? null : userList.get(0);
+        if (u != null) {
+            throw new RuntimeException("User already exists!");
+        }
         return userRepository.save(user);
     }
 
@@ -32,8 +37,12 @@ public class UserService {
         return ResponseEntity.ok(response);
     }
 
-    public void deleteAll() {
+    public ResponseEntity<Map<String, String>> deleteAll() {
         userRepository.deleteAll();
+        Map<String, String> map = new HashMap<>();
+        map.put("status","202");
+        map.put("message","Deleted every users");
+        return ResponseEntity.ok(map);
     }
 
     public ResponseEntity<Map<String, String>> login(User userDetails) {
@@ -46,10 +55,11 @@ public class UserService {
             response.put("message", "Wrong Credentials");
             response.put("username", userDetails.getUsername());
             response.put("password", userDetails.getPassword());
-            throw new UserNotFoundException("Wrong Login Credentials");
+            return ResponseEntity.badRequest().body(response);
         }
-
         response.put("status", "success");
+        response.put("userId", user.getId() + "");
+
         return ResponseEntity.ok(response);
     }
 

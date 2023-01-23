@@ -1,8 +1,16 @@
 package com.todo.app.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 @Table(name = "task")
 public class Task {
 
@@ -17,54 +25,9 @@ public class Task {
     @Column(name = "user_id", nullable = false)
     private int userId;
 
-    public Task() {
-    }
-
     public Task(int id, String task, int userId) {
         this.id = id;
         this.task = task;
         this.userId = userId;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTask() {
-        return task;
-    }
-
-    public void setTask(String task) {
-        this.task = task;
-    }
-
-    public boolean isCompleted() {
-        return isCompleted;
-    }
-
-    public void setCompleted(boolean completed) {
-        isCompleted = completed;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    @Override
-    public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", task='" + task + '\'' +
-                ", isCompleted=" + isCompleted +
-                ", userId=" + userId +
-                '}';
     }
 }

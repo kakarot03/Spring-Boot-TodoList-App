@@ -19,11 +19,12 @@ public class TaskService {
     @Autowired
     UserRepository userRepository;
 
-    public void addTask(Task task) {
+    public Task addTask(Task task) {
         if(!checkUser(task.getUserId())) {
             throw new UserNotFoundException("No User exists with id " + task.getUserId());
         }
-        todoRepository.save(task);
+        Task t = todoRepository.save(task);
+        return t;
     }
 
     public ResponseEntity<Map<String, Boolean>> deleteTask(int id) {

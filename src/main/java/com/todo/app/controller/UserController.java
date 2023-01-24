@@ -15,11 +15,16 @@ import java.util.Map;
 @RequestMapping("/api/v1/user")
 @CrossOrigin(origins = "*")
 public class UserController {
+
+
     @Autowired
     UserService service;
 
     @Autowired
     private RabbitMQProducer producer;
+
+    public UserController() {
+    }
 
     @PostMapping("/add")
     public User addUser(@RequestBody User user) {
@@ -54,4 +59,5 @@ public class UserController {
         producer.sendMessage(list);
         return list;
     }
+
 }

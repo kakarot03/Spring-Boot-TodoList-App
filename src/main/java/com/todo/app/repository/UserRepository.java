@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    @Query("SELECT new Task(id, task, userId) FROM Task t WHERE userId = :userId")
+    @Query("SELECT new Task(id, task, userId, creationTS) FROM Task t WHERE userId = :userId")
     public List<Task> getTasks(int userId);
 
     public List<User> findByUsername(String username);

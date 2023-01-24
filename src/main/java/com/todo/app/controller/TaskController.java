@@ -3,6 +3,10 @@ package com.todo.app.controller;
 import com.todo.app.entity.Task;
 import com.todo.app.producer.RabbitMQProducer;
 import com.todo.app.service.TaskService;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/task")
 @CrossOrigin(origins = "*")
-public class TodoListController {
+public class TaskController {
     @Autowired
     TaskService service;
 
@@ -52,5 +56,20 @@ public class TodoListController {
         List<Task> response = service.getAllTasks();
         producer.sendMessage(response);
         return response;
+    }
+
+    @GetMapping("/load")
+    public void executeBatch() {
+        try {
+            service.load();
+        } catch (JobParametersInvalidException e) {
+            throw new RuntimeException(e);
+        } catch (JobExecutionAlreadyRunningException e) {
+            throw new RuntimeException(e);
+        } catch (JobRestartException e) {
+            throw new RuntimeException(e);
+        } catch (JobInstanceAlreadyCompleteException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

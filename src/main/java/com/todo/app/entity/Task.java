@@ -1,10 +1,12 @@
 package com.todo.app.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Date;
 
 @Entity
 @NoArgsConstructor
@@ -21,13 +23,15 @@ public class Task {
     private String task;
     @Column(name = "completed")
     private boolean isCompleted = false;
-
     @Column(name = "user_id", nullable = false)
     private int userId;
+    @Column(name = "creationTS")
+    private Date creationTS;
 
-    public Task(int id, String task, int userId) {
+    public Task(int id, String task, int userId, Date creationTS) {
         this.id = id;
         this.task = task;
         this.userId = userId;
+        this.creationTS = creationTS;
     }
 }

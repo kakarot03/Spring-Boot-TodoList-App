@@ -18,6 +18,7 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+    // Add User with provided Details
     public User addUser(User user) {
         List<User> userList = userRepository.findByUsername(user.getUsername());
         User u = userList.isEmpty() ? null : userList.get(0);
@@ -27,6 +28,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // Delete a User with given ID
     public ResponseEntity<Map<String, Boolean>> deleteUser(int id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("No User exists with id " + id));
@@ -37,6 +39,7 @@ public class UserService {
         return ResponseEntity.ok(response);
     }
 
+    // Delete every Users
     public ResponseEntity<Map<String, String>> deleteAll() {
         userRepository.deleteAll();
         Map<String, String> map = new HashMap<>();
@@ -45,6 +48,7 @@ public class UserService {
         return ResponseEntity.ok(map);
     }
 
+    // Authenticate the User with his credentials
     public ResponseEntity<Map<String, String>> login(User userDetails) {
         Map<String, String> response = new HashMap<>();
         List<User> list = userRepository.findByUsername(userDetails.getUsername());
@@ -63,7 +67,9 @@ public class UserService {
         return ResponseEntity.ok(response);
     }
 
+    // Get every Task corresponding to a specific User with his ID
     public List<Task> getAllTasks(int userId) {
         return userRepository.getTasks(userId);
     }
+
 }

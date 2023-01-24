@@ -1,9 +1,11 @@
 package com.todo.app.controller;
 
+import com.todo.app.consumer.Consumer;
 import com.todo.app.entity.Task;
 import com.todo.app.entity.User;
 import com.todo.app.producer.RabbitMQProducer;
 import com.todo.app.service.UserService;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@NoArgsConstructor
 @RestController
 @RequestMapping("/api/v1/user")
 @CrossOrigin(origins = "*")
 public class UserController {
-
 
     @Autowired
     UserService service;
@@ -23,12 +25,16 @@ public class UserController {
     @Autowired
     private RabbitMQProducer producer;
 
-    public UserController() {
-    }
-
     @PostMapping("/add")
     public User addUser(@RequestBody User user) {
-        producer.sendMessage(service.addUser(user));
+        User newUser = null;
+        try {
+            newUser = service.addUser(user);
+        } catch (Exception e) {
+            return newUser;
+        }
+        producer.sendMessage(newUser);
+        producer.sendMessageToUserQueue(new Consumer(user.getUsername(), 0));
         return user;
     }
 

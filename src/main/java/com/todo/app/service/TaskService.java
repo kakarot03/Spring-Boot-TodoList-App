@@ -1,5 +1,7 @@
 package com.todo.app.service;
 
+import com.todo.app.consumer.Consumer;
+import com.todo.app.consumer.ConsumerRepository;
 import com.todo.app.entity.Task;
 import com.todo.app.exception.TaskNotFoundException;
 import com.todo.app.exception.UserNotFoundException;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,8 @@ public class TaskService {
     TaskRepository todoRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ConsumerRepository consumerRepository;
     @Autowired
     JobLauncher jobLauncher;
     @Autowired
@@ -38,7 +43,9 @@ public class TaskService {
         if(!checkUser(task.getUserId())) {
             throw new UserNotFoundException("No User exists with id " + task.getUserId());
         }
+        task.setCreationTS(new Date());
         Task t = todoRepository.save(task);
+        updateConsumer(userRepository.findById(task.getUserId()).orElse(null).getUsername());
         return t;
     }
 
@@ -73,7 +80,7 @@ public class TaskService {
         return todoRepository.findAll();
     }
 
-    // Check if an User exists with the given Id
+    // Check if a User exists with the given ID
     private boolean checkUser(int userId) {
         return !userRepository.findById(userId).isEmpty();
     }
@@ -82,6 +89,16 @@ public class TaskService {
     private Task checkTask(int taskId) {
         return todoRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("No Task exists with id :" + taskId));
+    }
+
+    public void updateConsumer(String name) {
+
+        List<Consumer> consumerList = consumerRepository.findByName(name);
+        if(!consumerList.isEmpty()) {
+            Consumer updatedConsumer = consumerList.get(0);
+            updatedConsumer.setTaskCount(updatedConsumer.getTaskCount() + 1);
+            consumerRepository.save(updatedConsumer);
+        }
     }
 
     public void load() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {

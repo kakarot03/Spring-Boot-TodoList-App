@@ -37,7 +37,6 @@ public class BatchConfig {
                 .reader(itemReader)
                 .processor(itemProcessor)
                 .writer(itemWriter)
-                .allowStartIfComplete(false)
                 .build();
 
         return jobBuilderFactory.get("Task Creation")
